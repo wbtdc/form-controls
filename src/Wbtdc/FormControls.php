@@ -2,15 +2,8 @@
 namespace Wbtdc;
   
 class FormControls {
-    private static $instance;
-    
-    public static function getInstance() {
-        if (!self::$instance) {
-            self::$instance = new Form_Controls();
-        }
-        return self::$instance;
-    }
-    private function __construct() {
+
+    public function __construct() {
         
     }
     
