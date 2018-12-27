@@ -9,9 +9,9 @@
 		}
 	],
 	"minimum-stability" : "dev",
-    "autoload": {
-        "psr-4": {
-            "Wbtdc\\": "src/"
-        }
-    }
+	"autoload" : {
+		"psr-4" : {
+			"Wbtdc\\Form_Controls" : "src/Wbtdc/Form_Controls"
+		}
+	}
 }
