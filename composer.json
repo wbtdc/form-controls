@@ -1,8 +1,8 @@
 {
-  "name" : "wbtdc/form-controls",
-  "autoload": {
-	"psr-0" : {
-	 	"Wbtdc\\Form_Controls" : "src"
+	"name" : "wbtdc/form-controls",
+	"autoload" : {
+		"psr-0" : {
+			"Wbtdc\\Form_Controls" : "src" 
+		}
 	}
-  }
 }
