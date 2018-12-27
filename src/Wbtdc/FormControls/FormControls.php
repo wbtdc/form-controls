@@ -2,7 +2,7 @@
 namespace Wbtdc\FormControls;
   
 class FormControls {
-
+    private $printedStyles = false;
     public function __construct() {
         
     }
@@ -10,7 +10,21 @@ class FormControls {
     public function update_option_setting($option, $oldval, $newval) {
         update_option($option, $newval);
     }
+    protected function checkPrintedStyles() {
+        if (!$this->printedStyles) {
+            $this->printStyles();
+            $this->printedStyles = true;
+        }
+    }
+    protected function printStyles() { ?>
+    	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <?php     
+    }
     public function display_switch($args) {
+        $this->checkPrintedStyles();
         $name = $args['name'];
         $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';
         $type = 'checkbox';
@@ -29,6 +43,7 @@ class FormControls {
     <?php 
     }
     public function display_colorpicker($args) {
+        $this->checkPrintedStyles();
         $name = $args['name'];
         $value = get_option($name, '');
         $value = $value != '' ? $value : $args['default'];
@@ -40,6 +55,7 @@ class FormControls {
         <?php 
     }
     public function display_textarea($args) {
+        $this->checkPrintedStyles();
         $type = $args['name'];
         $settings = array(
             'media_buttons' => false,
@@ -55,6 +71,7 @@ class FormControls {
         wp_editor($content, $type, $settings);
     }
     public function display_img($args) { 
+        $this->checkPrintedStyles();
         $type = $args['name'];
         $al_funnel_img = get_option($type, null);
         $al_funnel_images = explode(',', $al_funnel_img);
@@ -79,6 +96,7 @@ class FormControls {
     <?php 
     } 
     public function display_input ($args) {
+        $this->checkPrintedStyles();
         $name = $args['name'];
         $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';        
         $type = array_key_exists('type', $args) ? $args['type'] : 'text';
@@ -90,25 +108,26 @@ class FormControls {
         <?php 
     }
     public function display_select($args) {
+        $this->checkPrintedStyles();
         $name = $args['name'];
         $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';
         $validation = array_key_exists('validation', $args) ? $args['validation'] : '';
         ?>
-        	<?php echo $req;?><select style="<?php echo $args['style'];?>" class="form-control <?php echo $args['class'];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
-        		<?php 
-        		  $vCallObj = $args['valueCallback'][0];
-        		  $method = $args['valueCallback'][1];
-        		  $cbArgs = $args['valueCallback'][2];
-        		  $value = $vCallObj->$method($cbArgs);
+    	<?php echo $req;?><select style="<?php echo $args['style'];?>" class="form-control <?php echo $args['class'];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
+    		<?php 
+    		  $vCallObj = $args['valueCallback'][0];
+    		  $method = $args['valueCallback'][1];
+    		  $cbArgs = $args['valueCallback'][2];
+    		  $value = $vCallObj->$method($cbArgs);
 
-        		  $oCallObj = $args['optionsCallback'][0];
-        		  $method = $args['optionsCallback'][1];
-        		  $oArgs = $args['optionsCallback'][2];
-        		  
-        		  $options = $oCallObj->$method($oArgs);
-        		  
-        		  echo $options;
-                  ?>
-        	</select><?php 
+    		  $oCallObj = $args['optionsCallback'][0];
+    		  $method = $args['optionsCallback'][1];
+    		  $oArgs = $args['optionsCallback'][2];
+    		  
+    		  $options = $oCallObj->$method($oArgs);
+    		  
+    		  echo $options;
+              ?>
+    	</select><?php 
     }
 }
