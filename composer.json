@@ -8,13 +8,11 @@
 			"email" : "dave@webuildthe.com"
 		}
 	],
-	{
+	"minimum-stability" : "dev",
     "autoload": {
         "psr-4": {
             "Monolog\\": "src/",
             "Vendor\\Namespace\\": ""
         }
     }
-}
-	"minimum-stability" : "dev"
 }
