@@ -1,7 +1,7 @@
 <?php
 namespace Wbtdc;
   
-class Form_Controls {
+class FormControls {
     private static $instance;
     
     public static function getInstance() {
