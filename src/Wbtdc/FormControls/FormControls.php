@@ -10,6 +10,24 @@ class FormControls {
     public function update_option_setting($option, $oldval, $newval) {
         update_option($option, $newval);
     }
+    public function display_switch($args) {
+        $name = $args['name'];
+        $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';
+        $type = 'checkbox';
+        
+        $value = $args['valueCallback'][0]->{$args['valueCallback'][1]}($args['valueCallback'][2]);
+        $validation = array_key_exists('validation', $args) ? $args['validation'] : '';
+
+        $checked = $value == 'on' ? ' checked' : '';?>
+		<input id="<?php echo $name;?>" name="<?php echo $name;?>" type="checkbox" data-on-text="<?php echo $args['on-text'];?>" data-on-color="info" data-off-color="warning" data-off-text="<?php echo $args['off-text'];?>" <?php echo $checked;?>>
+        
+        <script type="text/javascript">
+        jQuery(document).ready(function() {
+            jQuery('#<?php echo $name;?>').bootstrapSwitch();
+        });
+        </script>
+    <?php 
+    }
     public function display_colorpicker($args) {
         $name = $args['name'];
         $value = get_option($name, '');
