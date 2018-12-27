@@ -1,5 +1,5 @@
 <?php
-namespace Wbtdc;
+namespace Wbtdc\FormControls;
   
 class FormControls {
 
