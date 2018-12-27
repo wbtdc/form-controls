@@ -1,14 +1,20 @@
 {
-    "name": "wbtdc/form-controls",
-    "description": "a form field library for PHP",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Dave Thibault",
-            "email": "dave@webuildthe.com"
+	"name" : "wbtdc/form-controls",
+	"description" : "a form field library for PHP",
+	"type" : "library",
+	"license" : "MIT",
+	"authors" : [{
+			"name" : "Dave Thibault",
+			"email" : "dave@webuildthe.com"
+		}
+	],
+	{
+    "autoload": {
+        "psr-4": {
+            "Monolog\\": "src/",
+            "Vendor\\Namespace\\": ""
         }
-    ],
-    "minimum-stability": "dev",
-    "require": {}
+    }
+}
+	"minimum-stability" : "dev"
 }
