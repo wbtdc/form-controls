@@ -1,5 +1,5 @@
 <?php
-namespace Davetbo\\Form_Controls;
+namespace \Wbtdc\Form_Controls;
   
 class Form_Controls {
     private static $instance;
