@@ -35,7 +35,9 @@ class FormControls {
         ?>
         <div class="custom-control custom-switch">
   			<input type="checkbox" class="custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
-  			<label class="custom-control-label" for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>
+  			<?php if (array_key_exists('label-text', $args)) { ?>
+  				<label class="custom-control-label" for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>
+  		    <?php }?>
 		</div>
     <?php 
     }
@@ -44,10 +46,12 @@ class FormControls {
         $value = get_option($name, '');
         $value = $value != '' ? $value : $args[self::DEF];
         $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
-        $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
-    
+        $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';    
         ?>
-        	<?php echo $req;?><input id="<?php echo $name;?>" type="text" name="<?php echo $name;?>" class="al_funnel_colorpicker" value="<?php echo $value;?>" <?php echo $validation;?>/>
+        	<?php if (array_key_exists('label-text', $args)) { ?>
+        		<label for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>        		
+        	<?php }
+        	echo $req;?><input id="<?php echo $name;?>" type="text" name="<?php echo $name;?>" class="al_funnel_colorpicker" value="<?php echo $value;?>" <?php echo $validation;?>/>
         <?php 
     }
     public function display_textarea($args) {
@@ -61,15 +65,18 @@ class FormControls {
         if ($content == '' && array_key_exists(self::DEF, $args)) {
             $content = $args[self::DEF];
         }
+        if (array_key_exists('label-text', $args)) { ?>
+    		<label for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>        		
+    	<?php }
         wp_editor($content, $type, $settings);
     }
     public function display_img($args) { 
         $type = $args['name'];
-        $al_funnel_img = get_option($type, null);
-        $al_funnel_images = explode(',', $al_funnel_img);
+        $funnel_img = get_option($type, null);
+        $al_funnel_images = explode(',', $funnel_img);
         $img_html = '';
         $template = $this->al_funnel_img_template();
-        if ($al_funnel_img) {
+        if ($funnel_img) {
             foreach ($al_funnel_images as $img_id) {
                 $url = wp_get_attachment_image_src($img_id, 'thumbnail')[0];  
                 $tmp = $template;
@@ -81,9 +88,12 @@ class FormControls {
         }
         $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
         $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
-    ?>
-        <div class="image_holder" id="<?php echo $type;?>_image_holder"><?php echo $img_html; ?></div>
-        <?php echo $req;?><input type="hidden" name="<?php echo $type;?>" id="<?php echo $type;?>_image_hidden" value="<?php echo $al_funnel_img;?>" <?php echo $validation;?>/>
+
+        if (array_key_exists('label-text', $args)) { ?>
+    		<label for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>        		
+    	<?php } ?>
+    	<div class="image_holder" id="<?php echo $type;?>_image_holder"><?php echo $img_html; ?></div>
+        <?php echo $req;?><input type="hidden" name="<?php echo $type;?>" id="<?php echo $type;?>_image_hidden" value="<?php echo $funnel_img;?>" <?php echo $validation;?>/>
         <input type="hidden" id="al_funnel_img_template" value='<?php echo $template;?>'/>
     <?php 
     } 
@@ -97,16 +107,20 @@ class FormControls {
             $value = $args[self::VALCB][0]->{$args[self::VALCB][1]}($args[self::VALCB][2]);
         }
         $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
-        ?>
-    	    <?php echo $req;?><input style="<?php echo $args['style'];?>" class="<?php echo $name;?> form-control <?php echo $args[self::CLS];?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
+        if (array_key_exists('label-text', $args)) { ?>
+    		<label for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>        		
+    	<?php }
+         echo $req;?><input style="<?php echo $args['style'];?>" class="<?php echo $name;?> form-control <?php echo $args[self::CLS];?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
         <?php 
     }
     public function display_select($args) {
         $name = $args['name'];
         $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
         $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
-        ?>
-    	<?php echo $req;?><select style="<?php echo $args['style'];?>" class="form-control <?php echo $args[self::CLS];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
+        if (array_key_exists('label-text', $args)) { ?>
+    		<label for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>        		
+    	<?php }
+        echo $req;?><select style="<?php echo $args['style'];?>" class="form-control <?php echo $args[self::CLS];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
     		<?php 
     		  $method = $args[self::VALCB][1];
 
