@@ -2,21 +2,24 @@
 namespace Wbtdc\FormControls;
   
 class FormControls {
-    private $printedStyles = false;
+    const REQUIRED = "/required/";
+    const STRONG = '<strong> * </strong>';
+    const CLS = 'class';
+    const OPTSCB = 'optionsCallback';
+    const VALCB = 'valueCallback';
+    const DEF = 'default';
+    const VAL = 'validation';
+    
     public function __construct() {
-        
+        add_action('admin_print_styles', array($this, 'printStyles'));
     }
     
-    public function update_option_setting($option, $oldval, $newval) {
+    public function update_option_setting($option, $newval) {
         update_option($option, $newval);
     }
-    protected function checkPrintedStyles() {
-        if (!$this->printedStyles) {
-            $this->printStyles();
-            $this->printedStyles = true;
-        }
-    }
-    protected function printStyles() { ?>
+
+    public function printStyles() { 
+        ?>
     	<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->    
     	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
@@ -24,35 +27,30 @@ class FormControls {
 		<?php     
     }
     public function display_switch($args) {
-        $this->checkPrintedStyles();
         $name = $args['name'];
-        $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';
-        $type = 'checkbox';
-        
-        $value = $args['valueCallback'][0]->{$args['valueCallback'][1]}($args['valueCallback'][2]);
-        $validation = array_key_exists('validation', $args) ? $args['validation'] : '';
 
-        $checked = $value == 'on' ? ' checked' : '';?>
+        $value = $args[self::VALCB][0]->{$args[self::VALCB][1]}($args[self::VALCB][2]);
+        error_log("Display switch got value $value");
+        $checked = $value === 'on' ? ' checked' : '';
+        ?>
         <div class="custom-control custom-switch">
-  			<input type="checkbox" class="custom-control-input <?php echo $args['class'];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
+  			<input type="checkbox" class="custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
   			<label class="custom-control-label" for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>
 		</div>
     <?php 
     }
     public function display_colorpicker($args) {
-        $this->checkPrintedStyles();
         $name = $args['name'];
         $value = get_option($name, '');
-        $value = $value != '' ? $value : $args['default'];
-        $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';
-        $validation = array_key_exists('validation', $args) ? $args['validation'] : '';
+        $value = $value != '' ? $value : $args[self::DEF];
+        $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
+        $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
     
         ?>
         	<?php echo $req;?><input id="<?php echo $name;?>" type="text" name="<?php echo $name;?>" class="al_funnel_colorpicker" value="<?php echo $value;?>" <?php echo $validation;?>/>
         <?php 
     }
     public function display_textarea($args) {
-        $this->checkPrintedStyles();
         $type = $args['name'];
         $settings = array(
             'media_buttons' => false,
@@ -60,15 +58,12 @@ class FormControls {
             'textarea_name' => $type
         );
         $content = get_option($type, '');
-        if ($content == '') {
-            if (array_key_exists('default', $args)) {
-                $content = $args['default'];
-            }
+        if ($content == '' && array_key_exists(self::DEF, $args)) {
+            $content = $args[self::DEF];
         }
         wp_editor($content, $type, $settings);
     }
     public function display_img($args) { 
-        $this->checkPrintedStyles();
         $type = $args['name'];
         $al_funnel_img = get_option($type, null);
         $al_funnel_images = explode(',', $al_funnel_img);
@@ -84,8 +79,8 @@ class FormControls {
                 $img_html .= $tmp;
             }
         }
-        $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';
-        $validation = array_key_exists('validation', $args) ? $args['validation'] : '';
+        $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
+        $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
     ?>
         <div class="image_holder" id="<?php echo $type;?>_image_holder"><?php echo $img_html; ?></div>
         <?php echo $req;?><input type="hidden" name="<?php echo $type;?>" id="<?php echo $type;?>_image_hidden" value="<?php echo $al_funnel_img;?>" <?php echo $validation;?>/>
@@ -93,33 +88,31 @@ class FormControls {
     <?php 
     } 
     public function display_input ($args) {
-        $this->checkPrintedStyles();
         $name = $args['name'];
-        $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';        
+        $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';        
         $type = array_key_exists('type', $args) ? $args['type'] : 'text';
         
-        $value = $args['valueCallback'][0]->{$args['valueCallback'][1]}($args['valueCallback'][2]);
-        $validation = array_key_exists('validation', $args) ? $args['validation'] : '';
+        $value = null;
+        if (array_key_exists(self::VALCB, $args)) {
+            $value = $args[self::VALCB][0]->{$args[self::VALCB][1]}($args[self::VALCB][2]);
+        }
+        $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
         ?>
-    	    <?php echo $req;?><input style="<?php echo $args['style'];?>" class="<?php echo $name;?> form-control <?php echo $args['class'];?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
+    	    <?php echo $req;?><input style="<?php echo $args['style'];?>" class="<?php echo $name;?> form-control <?php echo $args[self::CLS];?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
         <?php 
     }
     public function display_select($args) {
-        $this->checkPrintedStyles();
         $name = $args['name'];
-        $req = array_key_exists ('validation', $args) && preg_match("/required/", $args['validation']) ? '<strong> * </strong>' : '';
-        $validation = array_key_exists('validation', $args) ? $args['validation'] : '';
+        $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
+        $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
         ?>
-    	<?php echo $req;?><select style="<?php echo $args['style'];?>" class="form-control <?php echo $args['class'];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
+    	<?php echo $req;?><select style="<?php echo $args['style'];?>" class="form-control <?php echo $args[self::CLS];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
     		<?php 
-    		  $vCallObj = $args['valueCallback'][0];
-    		  $method = $args['valueCallback'][1];
-    		  $cbArgs = $args['valueCallback'][2];
-    		  $value = $vCallObj->$method($cbArgs);
+    		  $method = $args[self::VALCB][1];
 
-    		  $oCallObj = $args['optionsCallback'][0];
-    		  $method = $args['optionsCallback'][1];
-    		  $oArgs = $args['optionsCallback'][2];
+    		  $oCallObj = $args[self::OPTSCB][0];
+    		  $method = $args[self::OPTSCB][1];
+    		  $oArgs = $args[self::OPTSCB][2];
     		  
     		  $options = $oCallObj->$method($oArgs);
     		  
