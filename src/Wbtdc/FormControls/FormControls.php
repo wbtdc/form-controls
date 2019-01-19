@@ -32,13 +32,18 @@ class FormControls {
         $value = $args[self::VALCB][0]->{$args[self::VALCB][1]}($args[self::VALCB][2]);
         error_log("Display switch got value $value");
         $checked = $value === 'on' ? ' checked' : '';
+        $label = $args['label-text'] ? $args['label-text'] : '';
+        $onText = $args['on-text'] ? $args['on-text'] : 'On';
+        $offText = $args['off-text'] ? $args['off-text'] : 'Off';
+        $settingLabel = $value == 'on' ? $onText : $offText;
         ?>
-        <div class="custom-control custom-switch">
-  			<input type="checkbox" class="custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
-  			<?php if (array_key_exists('label-text', $args)) { ?>
-  				<label class="custom-control-label" for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>
-  		    <?php }?>
-		</div>
+		<label for="<?php echo $name;?>"><?php echo $label;?>  
+            <div style="display:inline;margin-left:20px;" class="custom-control custom-switch">
+      			<input type="checkbox" class="wbtdcSwitch custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
+    			<label class="custom-control-label" for="<?php echo $name;?>"></label>
+    		</div>
+    		<label data-ontext="<?php echo $onText;?>" data-offtext="<?php echo $offText;?>" id="lbl-<?php echo $name;?>"><?php echo $settingLabel;?></label>
+		</label>   
     <?php 
     }
     public function display_colorpicker($args) {
@@ -51,7 +56,7 @@ class FormControls {
         	<?php if (array_key_exists('label-text', $args)) { ?>
         		<label for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>        		
         	<?php }
-        	echo $req;?><input id="<?php echo $name;?>" type="text" name="<?php echo $name;?>" class="al_funnel_colorpicker" value="<?php echo $value;?>" <?php echo $validation;?>/>
+        	echo $req;?><input id="<?php echo $name;?>" type="text" name="<?php echo $name;?>" class="colorpicker" value="<?php echo $value;?>" <?php echo $validation;?>/>
         <?php 
     }
     public function display_textarea($args) {
@@ -70,14 +75,14 @@ class FormControls {
     	<?php }
         wp_editor($content, $type, $settings);
     }
-    public function display_img($args) { 
+    /*public function display_img($args) { 
         $type = $args['name'];
-        $funnel_img = get_option($type, null);
-        $al_funnel_images = explode(',', $funnel_img);
+        $img = get_option($type, null);
+        $images = explode(',', $img);
         $img_html = '';
-        $template = $this->al_funnel_img_template();
-        if ($funnel_img) {
-            foreach ($al_funnel_images as $img_id) {
+        $template = $this->img_template();
+        if ($img) {
+            foreach ($images as $img_id) {
                 $url = wp_get_attachment_image_src($img_id, 'thumbnail')[0];  
                 $tmp = $template;
                 $tmp = preg_replace("/\[img_id\]/", $img_id, $tmp);
@@ -93,10 +98,10 @@ class FormControls {
     		<label for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>        		
     	<?php } ?>
     	<div class="image_holder" id="<?php echo $type;?>_image_holder"><?php echo $img_html; ?></div>
-        <?php echo $req;?><input type="hidden" name="<?php echo $type;?>" id="<?php echo $type;?>_image_hidden" value="<?php echo $funnel_img;?>" <?php echo $validation;?>/>
-        <input type="hidden" id="al_funnel_img_template" value='<?php echo $template;?>'/>
+        <?php echo $req;?><input type="hidden" name="<?php echo $type;?>" id="<?php echo $type;?>_image_hidden" value="<?php echo $img;?>" <?php echo $validation;?>/>
+        <input type="hidden" id="img_template" value='<?php echo $template;?>'/>
     <?php 
-    } 
+    }*/
     public function display_input ($args) {
         $name = $args['name'];
         $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';        
