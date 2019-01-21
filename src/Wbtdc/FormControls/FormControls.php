@@ -7,7 +7,7 @@ class FormControls {
     const CLS = 'class';
     const OPTSCB = 'optionsCallback';
     const VALCB = 'valueCallback';
-    const DEF = 'default';
+    const DEFAULT = 'default';
     const VAL = 'validation';
     
     public function __construct() {
@@ -20,10 +20,9 @@ class FormControls {
 
     public function printStyles() { 
         ?>
-    	<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->    
     	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>		
 		<?php     
     }
     public function display_switch($args) {
@@ -34,22 +33,33 @@ class FormControls {
         $checked = $value === 'on' ? ' checked' : '';
         $label = $args['label-text'] ? $args['label-text'] : '';
         $onText = $args['on-text'] ? $args['on-text'] : 'On';
-        $offText = $args['off-text'] ? $args['off-text'] : 'Off';
-        $settingLabel = $value == 'on' ? $onText : $offText;
+        $offText = $args['off-text'] ? $args['off-text'] : 'Off';   
+        error_log("Display switch got checked $checked");
+        $colClass = array_key_exists('colClass', $args) ? $args['colClass'] : 'col-m-12';
+
         ?>
-		<label for="<?php echo $name;?>"><?php echo $label;?>  
-            <div style="display:inline;margin-left:20px;" class="custom-control custom-switch">
-      			<input type="checkbox" class="wbtdcSwitch custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
-    			<label class="custom-control-label" for="<?php echo $name;?>"></label>
-    		</div>
-    		<label data-ontext="<?php echo $onText;?>" data-offtext="<?php echo $offText;?>" id="lbl-<?php echo $name;?>"><?php echo $settingLabel;?></label>
-		</label>   
+        <div class="row">
+        <?php if ($label !== '') { ?>
+        	<div class="<?php echo $colClass;?> labelCol">
+				<label for="<?php echo $name;?>"><?php echo $label;?></label>   		        		
+        	</div>
+        <?php }?>
+        	<div class="<?php echo $colClass;?> fieldCol">
+    			<label style="margin-left:20px;"><?php echo $offText;?></label> 
+        		<div style="position:relative;top:-5px;display:inline-block;margin-left:10px;" class="custom-control custom-switch">
+  					<input type="checkbox" class="wbtdcSwitch custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
+					<label class="custom-control-label" for="<?php echo $name;?>"></label>
+				</div>
+				<label><?php echo $onText;?></label>
+        	</div>
+        </div>
+
     <?php 
     }
     public function display_colorpicker($args) {
         $name = $args['name'];
         $value = get_option($name, '');
-        $value = $value != '' ? $value : $args[self::DEF];
+        $value = $value != '' ? $value : $args[self::DEFAULT];
         $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
         $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';    
         ?>
@@ -61,19 +71,31 @@ class FormControls {
     }
     public function display_textarea($args) {
         $type = $args['name'];
+        $tinymce = array_key_exists('tinymce', $args) ? $args['tinymce'] : true; 
         $settings = array(
             'media_buttons' => false,
             'textarea_rows' => 10,
-            'textarea_name' => $type
+            'textarea_name' => $type,
+            'tinymce' => $tinymce
         );
-        $content = get_option($type, '');
-        if ($content == '' && array_key_exists(self::DEF, $args)) {
-            $content = $args[self::DEF];
+        $content = $args['content'];
+        if ($content == '' && array_key_exists(self::DEFAULT, $args)) {
+            $content = $args[self::DEFAULT];
         }
+        ?>
+        <div class="row"> 
+    	<?php 
         if (array_key_exists('label-text', $args)) { ?>
-    		<label for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>        		
-    	<?php }
-        wp_editor($content, $type, $settings);
+        	<div class="col-sm">
+    			<label for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>
+    		</div>        		
+    	<?php 
+        } ?>
+			<div class="col-sm">
+			<?php wp_editor($content, $type, $settings);?>
+			</div>
+		</div>
+		<?php 
     }
     /*public function display_img($args) { 
         $type = $args['name'];
@@ -106,37 +128,60 @@ class FormControls {
         $name = $args['name'];
         $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';        
         $type = array_key_exists('type', $args) ? $args['type'] : 'text';
-        
+        $colClass = array_key_exists('colClass', $args) ? $args['colClass'] : 'col-m-12';
         $value = null;
         if (array_key_exists(self::VALCB, $args)) {
             $value = $args[self::VALCB][0]->{$args[self::VALCB][1]}($args[self::VALCB][2]);
         }
+        if (!$value && array_key_exists(SELF::DEFAULT, $args)) {
+            $value = $args[SELF::DEFAULT];
+        }
         $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
         if (array_key_exists('label-text', $args)) { ?>
-    		<label for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>        		
-    	<?php }
-         echo $req;?><input style="<?php echo $args['style'];?>" class="<?php echo $name;?> form-control <?php echo $args[self::CLS];?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
+        <div class="row">
+            <div class="<?php echo $colClass;?> labelCol">
+        		<label class="formLabel" style="display:inline;" for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>
+        	</div>        		
+        	<?php } ?>
+        	<div class="<?php echo $colClass;?> fieldCol" style="text-align:right;">
+            <?php  echo $req;?><input style="<?php echo $args['style'];?>;display:inline;" class="<?php echo $name;?> form-control <?php echo $args[self::CLS];?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
+             </div>
+         </div>
         <?php 
     }
     public function display_select($args) {
         $name = $args['name'];
         $req = array_key_exists (self::VAL, $args) && preg_match(self::REQUIRED, $args[self::VAL]) ? self::STRONG : '';
         $validation = array_key_exists(self::VAL, $args) ? $args[self::VAL] : '';
-        if (array_key_exists('label-text', $args)) { ?>
-    		<label for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>        		
-    	<?php }
-        echo $req;?><select style="<?php echo $args['style'];?>" class="form-control <?php echo $args[self::CLS];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
-    		<?php 
-    		  $method = $args[self::VALCB][1];
+        $colClass = array_key_exists('colClass', $args) ? $args['colClass'] : 'col-m-12';
+        
+        ?>
+        <div class="row"> 
+            <?php 
+            if (array_key_exists('label-text', $args)) { ?>                
+            	<div class="<?php echo $colClass;?>">
+    				<label for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>        		       	
+            	</div>
+        		<?php 
+            }
+            ?>
+    		<div class="<?php echo $colClass;?>">
+            	<?php echo $req;?>&nbsp;<select style="<?php echo $args['style'];?>" class="form-control <?php echo $args[self::CLS];?>" name="<?php echo $name;?>" <?php echo $validation;?>>
+        		<?php 
+            		  $method = $args[self::VALCB][1];
+        
+            		  $oCallObj = $args[self::OPTSCB][0];
+            		  $method = $args[self::OPTSCB][1];
+            		  $oArgs = $args[self::OPTSCB][2];
+            		  
+            		  $options = $oCallObj->$method($oArgs);
+            		  
+            		  echo $options;
+                    ?>   
+                  </select>		
+    		</div>
+        </div><!-- end div.row -->
 
-    		  $oCallObj = $args[self::OPTSCB][0];
-    		  $method = $args[self::OPTSCB][1];
-    		  $oArgs = $args[self::OPTSCB][2];
-    		  
-    		  $options = $oCallObj->$method($oArgs);
-    		  
-    		  echo $options;
-              ?>
-    	</select><?php 
+    	<?php 
     }
 }
