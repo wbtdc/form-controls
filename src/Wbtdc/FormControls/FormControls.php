@@ -144,7 +144,7 @@ class FormControls {
         	</div>        		
         	<?php } ?>
         	<div class="<?php echo $colClass;?> fieldCol" style="text-align:right;">
-            <?php  echo $req;?><input style="<?php echo $args['style'];?>;display:inline;" class="<?php echo $name;?> form-control <?php echo $args[self::CLS];?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
+            <?php  echo $req;?><input style="<?php echo $args['style'];?>;display:inline;" class="<?php echo $name;?> form-control <?php echo array_key_exists(self::CLS, $args) ? $args[self::CLS] : '';?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
              </div>
          </div>
         <?php 
