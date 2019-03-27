@@ -44,8 +44,8 @@ class FormControls {
         <?php }?>
         	<div class="<?php echo $colClass;?> fieldCol">
     			<label style="margin-left:20px;"><?php echo $offText;?></label> 
-        		<div style="position:relative;top:-5px;display:inline-block;margin-left:10px;" class="custom-control custom-switch">
-  					<input type="checkbox" class="wbtdcSwitch custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
+        		<div style="<?php echo $args['div-style'];?> position:relative;top:-5px;display:inline-block;margin-left:10px;" class="custom-control custom-switch">
+  					<input style="<?php echo $args['input-style'];?>" type="checkbox" class="wbtdcSwitch custom-control-input <?php echo $args[self::CLS];?>" id="<?php echo $name;?>" name="<?php echo $name;?>"  <?php echo $checked;?>/>
 					<label class="custom-control-label" for="<?php echo $name;?>"></label>
 				</div>
 				<label><?php echo $onText;?></label>
@@ -64,7 +64,7 @@ class FormControls {
         	<?php if (array_key_exists('label-text', $args)) { ?>
         		<label for="<?php echo $name;?>"><?php echo $args['label-text'];?></label>        		
         	<?php }
-        	echo $req;?><input id="<?php echo $name;?>" type="text" name="<?php echo $name;?>" class="colorpicker" value="<?php echo $value;?>" <?php echo $validation;?>/>
+        	echo $req;?><input style="<?php echo $args['input-style'];?>" id="<?php echo $name;?>" type="text" name="<?php echo $name;?>" class="colorpicker" value="<?php echo $value;?>" <?php echo $validation;?>/>
         <?php 
     }
     public function display_textarea($args) {
@@ -141,8 +141,8 @@ class FormControls {
         		<label class="formLabel" style="display:inline;" for="<?php echo $type;?>"><?php echo $args['label-text'];?></label>
         	</div>        		
         	<?php } ?>
-        	<div class="<?php echo $colClass;?> fieldCol" style="text-align:right;">
-            <?php  echo $req;?><input style="<?php echo $args['style'];?>;display:inline;" class="<?php echo $name;?> form-control <?php echo array_key_exists(self::CLS, $args) ? $args[self::CLS] : '';?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
+        	<div class="<?php echo $colClass;?> fieldCol" style="<?php echo $args['div-style'];?>" text-align:right;">
+            <?php  echo $req;?><input style="<?php echo $args['input-style'];?>;display:inline;" class="<?php echo $name;?> form-control <?php echo array_key_exists(self::CLS, $args) ? $args[self::CLS] : '';?>" type="<?php echo $type; ?>" name="<?php echo $name;?>" value="<?php echo $value;?>" <?php echo $validation;?>/>
              </div>
          </div>
         <?php 
