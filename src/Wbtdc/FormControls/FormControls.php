@@ -29,12 +29,10 @@ class FormControls {
         $name = $args['name'];
 
         $value = $args[self::VALCB][0]->{$args[self::VALCB][1]}($args[self::VALCB][2]);
-        error_log("Display switch got value $value");
         $checked = $value === 'on' ? ' checked' : '';
         $label = $args['label-text'] ? $args['label-text'] : '';
         $onText = $args['on-text'] ? $args['on-text'] : 'On';
         $offText = $args['off-text'] ? $args['off-text'] : 'Off';   
-        error_log("Display switch got checked $checked");
         $colClass = array_key_exists('colClass', $args) ? $args['colClass'] : 'col-m-12';
 
         ?>
